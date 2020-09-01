@@ -27,3 +27,5 @@ Route::post('/employee/save','EmployeeController@saveEmployee')->name('employee.
 Route::get('/employee/list','EmployeeController@list')->name('employee.list');
 
 Route::get('/get-employee-data','EmployeeController@getEmployeeData')->name('employee.data.get');
+
+Route::get('/employee/edit/{id}','EmployeeController@editEmployee')->name('employee.edit');

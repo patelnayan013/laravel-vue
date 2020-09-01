@@ -17,23 +17,31 @@ class EmployeeController extends Controller
 	}
 
 	public function saveEmployee(Request $request){
+		$step1 = [
+	        'first_name' => 'required',
+	        'last_name' => 'required',
+	        'phone_number' => 'required|numeric',
+	        'email' => 'required|email'
+	    ];
+	    $step2 = [
+	        'date_of_birth' => 'required',
+	        'salary' => 'required|numeric'
+	    ];
 
-		if(isset($request->step) && $request->step == 1) {
-			$this->validate($request, [
-		        'first_name' => 'required',
-		        'last_name' => 'required',
-		        'phone_number' => 'required|numeric',
-		        'email' => 'required|email'
-		    ]);
-			return successResponse('Proceed next');
-		}
+	    if(isset($request->id)) {
+	    	$this->validate($request, array_merge($step1, $step2));
+	    } else {
+	    	if(isset($request->step) && $request->step == 1) {
+				$this->validate($request, $step1);
+				return successResponse('Proceed next');
+			}
 
-		if(isset($request->step) && $request->step == 2) {
-			$this->validate($request, [
-		        'date_of_birth' => 'required',
-		        'salary' => 'required|numeric'
-		    ]);
-		}
+			if(isset($request->step) && $request->step == 2) {
+				$this->validate($request, $step2);
+			}
+	    }
+
+		
 
 
 		DB::beginTransaction();
