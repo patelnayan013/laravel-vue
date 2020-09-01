@@ -22,3 +22,8 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/employee/create','EmployeeController@createEmployee')->name('employee.create');
 
 Route::post('/employee/save','EmployeeController@saveEmployee')->name('employee.save');
+
+
+Route::get('/employee/list','EmployeeController@list')->name('employee.list');
+
+Route::get('/get-employee-data','EmployeeController@getEmployeeData')->name('employee.data.get');

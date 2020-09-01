@@ -8,7 +8,7 @@
                 <div class="card-body">
                     
                     <form id="employeeForm">
-                    	<template v-if="step==1">
+                    	<div v-show="step==1">
 	                    	<div class="form-group">
 	                    		<div class="col-12">
 				                    <label for="first_name" :class='"mb-0  "+[errors.first_name ? "text-danger" : ""]'>First Name</label>
@@ -36,9 +36,9 @@
 				                    <input type="email" name="email" v-model="email" :class='"form-control "+[errors.email ? "is-invalid" : ""]'>
 				                </div>
 				            </div>
-			            </template>
+			            </div>
 
-			            <template v-if="step==2">
+			            <div v-show="step==2">
 				            <div class="form-group">
 	                    		<div class="col-12">
 				                    <label for="date_of_birth" :class='"mb-0  "+[errors.date_of_birth ? "text-danger" : ""]'>Date of Birth</label>
@@ -52,7 +52,7 @@
 				                    <input type="number" name="salary" v-model="salary" :class='"form-control "+[errors.salary ? "is-invalid" : ""]'>
 				                </div>
 				            </div>
-			            </template>
+			            </div>
 
                     	<div class="form-group row">
                     		<div class="col-6 text-left" >

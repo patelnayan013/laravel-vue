@@ -22,6 +22,10 @@ window.Vue = require('vue');
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
 Vue.component('employee-create', require('./components/employee/create.vue').default);
+
+Vue.component('employee-list', require('./components/employee/list.vue').default);
+
+
 Vue.component('validation', require('./components/core/validation.vue').default);
 
 import VueToast from 'vue-toast-notification';

@@ -54,3 +54,17 @@ function viewDate($date){
     }
     return date('D, d M Y',strtotime($date));
 }
+
+function getPaginationInfo($data){
+    return [
+        'pagination' => [
+            'total'        => $data->total(),
+            'per_page'     => $data->perPage(),
+            'from'         => $data->firstItem(),
+            'to'           => $data->lastItem(),
+            'current_page' => $data->currentPage(),
+            'last_page'    => $data->lastPage()
+        ],
+        'data' => $data
+    ];
+}

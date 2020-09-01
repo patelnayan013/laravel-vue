@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Employee;
+use Response;
 use DB;
 
 class EmployeeController extends Controller
@@ -71,6 +72,14 @@ class EmployeeController extends Controller
 
 	public function getEmployeeData(Request $request){
 
+        if(isset($request->id)){
+            return Employee::find($request->id);
+        }
+
+        $data = Employee::latest()->paginate(25);
+
+        $response['employee'] = getPaginationInfo($data);
+        return Response::json($response);
 	}
 
 }
