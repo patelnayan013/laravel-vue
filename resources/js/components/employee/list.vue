@@ -6,7 +6,7 @@
                 <div class="card-header">Employee List</div>
 
                 <div class="card-body">
-                	<a href="/employee/create" @click="navigate('edit')" class="btn btn-primary text-white">Add</a>
+                	<a href="/employee/create" class="btn btn-primary text-white">Add</a>
 
                 	<a href="javascript:void(0);" @click="navigate('view')" class="btn btn-success text-white">View</a>
 
@@ -24,6 +24,35 @@
 				    </ag-grid-vue>
 				</div>
 			</div>
+
+			<div class="card mt-10" v-if="rowData!=null">
+		        <div class="card-pagination">
+		            <span class="pagination-text">Showing employee {{pagination.from}} to {{pagination.to}} of {{pagination.total}}</span>
+
+		            <ul class="pagination pagination-rounded mb-0 pull-right">
+
+		                <li class="page-item">
+		                    <a class="page-link" href="javascript:void(0);" aria-label="Previous" @click="init(pagination.current_page-1)">
+		                        <span aria-hidden="true">&laquo;</span>
+		                        <span class="sr-only">Previous</span>
+		                    </a>
+		                </li>
+
+		                <li v-bind:class="[ page == isActived ? 'page-item active' : 'page-item']" v-for="page in pagesNumber">
+		                    <a class="page-link" @click="init(pagination.current_page-1)" href="javascript: void(0);">{{page}}</a>
+		                </li>
+
+
+		                <li class="page-item">
+		                    <a class="page-link" @click="init(pagination.last_page)" href="javascript: void(0);" aria-label="Next">
+		                        <span aria-hidden="true">&raquo;</span>
+		                        <span class="sr-only">Next</span>
+		                    </a>
+		                </li>
+		                
+		            </ul>
+		        </div>
+		    </div>
 		</div>
 	</div>
 
@@ -64,6 +93,7 @@
 		    </div>
 		 </div>
 	</div>
+	<loader :loading='loading'></loader>
 	<validation ref="error"></validation>
 </div>
 </template>
@@ -87,29 +117,67 @@ export default {
 			date_of_birth:null,
 			salary:null,
 
+			pagination: {
+          		total: 0,
+	          	per_page: 2,
+	          	from: 1,
+	          	to: 0,
+	          	current_page: 1,
+	          	last_page:''
+	      	},
+	      	offset:1,
+	      	loading:true,
         }
     },
+
+    computed: {
+        isActived:function() {
+            return this.pagination.current_page;
+        },
+        pagesNumber:function() {
+
+            if (!this.pagination.to) {
+                return [];
+            }
+            var from = this.pagination.current_page - this.offset;
+            if (from < 1) {
+                from = 1;
+            }
+            var to = this.pagination.last_page;
+
+            var pagesArray = [];
+            while (from <= to) {
+                pagesArray.push(from);
+                from++;
+            }
+            return pagesArray;
+        },
+	},
+
     components: {
         AgGridVue
     },
 
     methods:{
 
-    	selected(){
-    		alert("eert");
-    	},
     	onGridReady(params) {
             this.gridApi = params.api;
             this.columnApi = params.columnApi;
         },
 
         navigate(type) {
+
             const selectedNodes = this.gridApi.getSelectedNodes();
             const selectedData = selectedNodes.map( node => node.data );
+
             if(!selectedData[0]) {
             	this.$refs.error.errorMessage('Select row please');
             	return
             }
+
+            if(type == 'delete'){
+        		return this.deleteItem(selectedData[0].id);
+        	}
             if(type == 'view') {
 
             	this.first_name = selectedData[0].first_name;
@@ -126,9 +194,39 @@ export default {
 
         },
 
-    	init(page){
+        deleteItem(id){
+        	this.$swal({
+			  title: 'Are you sure?',
+			  text: 'You want to delete this employee?',
+			  icon: 'warning',
+			  showCancelButton: true,
+			  confirmButtonText: 'Yes, delete it!',
+			  cancelButtonText: 'No, keep it'
+			}).then((result) => {
+			  	if (result.value) {
+			  		this.loading = true;
+			   		axios.get('/employee/delete/'+id).then(result =>{
+			   			this.loading = false;
+						if(result.data.meta.code == 200) {
+		                    this.$refs.error.successMessage(result.data.meta.message);
+		                    this.init(this.pagination.current_page);
+		                    return;
+		                }
+		                
+		                this.$refs.error.errorMessage(result.data.meta.message);
+					}).catch(error => {
+		            	this.$refs.error.showValidationError(error);
+		                this.loading = false;
+		            });
+			  	} 
+			});
+        },
 
+    	init(page){
+    		this.loading = true;
             axios.get('/get-employee-data?page='+page ).then(response => {
+            	this.loading = false;
+            	this.pagination = response.data.employee.pagination;
                 var data = response.data.employee.data.data;
                 var rows = [];
                 $(data).each((k,v) => {

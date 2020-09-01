@@ -11,11 +11,12 @@ use DB;
 
 class EmployeeController extends Controller
 {
-
+	/****** View create employee ********/
 	public function createEmployee(){
 		return view('employee.create');
 	}
 
+	/****** Save employee ********/
 	public function saveEmployee(Request $request){
 		$step1 = [
 	        'first_name' => 'required',
@@ -41,8 +42,6 @@ class EmployeeController extends Controller
 			}
 	    }
 
-		
-
 
 		DB::beginTransaction();
         try {
@@ -62,16 +61,34 @@ class EmployeeController extends Controller
         return successResponse($message);	    
 	}
 
+	/****** Edit employee view********/
 	public function editEmployee($id){
 		return view('employee.create',compact('id'));
 	}
 
+	/****** View employee ********/
 	public function viewEmployee($id){
 		return view('employee.view',compact('id'));
 	}
 
+	/****** Delete employee ********/
 	public function deleteEmployee($id){
-		
+		$data = Employee::find($id);
+        if(empty($data)) {
+            return errorResponse('Employee not found.');
+        }
+
+        DB::beginTransaction();
+        try {
+            
+            $data->delete();
+            
+        } catch (\Exception $e) {
+            DB::rollback(); 
+            return errorResponse('Error while deleting employee, try again');
+        }
+        DB::commit();
+        return successResponse('Employee deleted successfully');
 	}
 
 	public function list(){

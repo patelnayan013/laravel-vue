@@ -44,7 +44,7 @@
 				            <div class="form-group">
 	                    		<div class="col-12">
 				                    <label for="date_of_birth" :class='"mb-0  "+[errors.date_of_birth ? "text-danger" : ""]'>Date of Birth</label>
-				                    <input type="date" name="date_of_birth" v-model="date_of_birth" :class='"form-control "+[errors.date_of_birth ? "is-invalid" : ""]'>
+				                    <input type="date" :max="max_date" name="date_of_birth" v-model="date_of_birth" :class='"form-control "+[errors.date_of_birth ? "is-invalid" : ""]'>
 				                </div>
 				            </div>
 
@@ -78,10 +78,12 @@
             </div>
         </div>
     </div>
+    <loader :loading='loading'></loader>
 </div>
 </template>
 
 <script>
+import moment from 'moment';
 export default {
 	props:['id'],
 	data(){
@@ -95,6 +97,7 @@ export default {
 			email:'',
 			date_of_birth:'',
 			salary:'',
+			max_date:moment().format('YYYY-MM-DD'),
 
 			step:1
 		};
@@ -106,6 +109,14 @@ export default {
 			this.errors = [];
             this.loading = true;
 
+            /*
+	            *	Here, There are two way we can sent data 
+	            *	1 serialize,
+	            *	2 individual form perameter.
+	            *   var data = {
+				*		first_name:this.first_name
+     		    *   }
+            */
 			var data = $("#employeeForm").serialize();
 			axios.post('/employee/save?step='+this.step,data).then(response => {
 				this.loading = false;
@@ -139,7 +150,9 @@ export default {
 		},
 
 		init(){
+			this.loading = true;
 			axios.get('/get-employee-data?id='+this.id).then(response => {
+				this.loading = false;
 				this.first_name = response.data.first_name;
 				this.last_name = response.data.last_name;
 				this.phone_number = response.data.phone_number;
@@ -152,8 +165,9 @@ export default {
 
     mounted() {
         if(this.id != 0) {
-        	this.init();
+        	return this.init();
         }
+        this.loading = false;
 
         
     }

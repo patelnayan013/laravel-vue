@@ -19,12 +19,11 @@ window.Vue = require('vue');
 // const files = require.context('./', true, /\.vue$/i);
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
 
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+Vue.component('loader', require('./components/core/loader.vue').default);
 
 Vue.component('employee-create', require('./components/employee/create.vue').default);
 
 Vue.component('employee-list', require('./components/employee/list.vue').default);
-
 
 Vue.component('validation', require('./components/core/validation.vue').default);
 
@@ -34,6 +33,10 @@ Vue.use(VueToast);
 
 import filter from './components/core/filter.js';
 Vue.use(filter);
+
+import VueSweetalert2 from 'vue-sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
+Vue.use(VueSweetalert2); 
 
 const app = new Vue({
     el: '#app',

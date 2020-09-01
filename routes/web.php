@@ -15,17 +15,21 @@
 
 
 Auth::routes();
-
+Route::get('/', 'HomeController@home')->name('index');
 Route::get('/home', 'HomeController@index')->name('home');
 
 
-Route::get('/employee/create','EmployeeController@createEmployee')->name('employee.create');
+Route::group(['middleware' => ['auth']], function () {
+	Route::get('/employee/create','EmployeeController@createEmployee')->name('employee.create');
 
-Route::post('/employee/save','EmployeeController@saveEmployee')->name('employee.save');
+	Route::post('/employee/save','EmployeeController@saveEmployee')->name('employee.save');
 
 
-Route::get('/employee/list','EmployeeController@list')->name('employee.list');
+	Route::get('/employee/list','EmployeeController@list')->name('employee.list');
 
-Route::get('/get-employee-data','EmployeeController@getEmployeeData')->name('employee.data.get');
+	Route::get('/get-employee-data','EmployeeController@getEmployeeData')->name('employee.data.get');
 
-Route::get('/employee/edit/{id}','EmployeeController@editEmployee')->name('employee.edit');
+	Route::get('/employee/edit/{id}','EmployeeController@editEmployee')->name('employee.edit');
+
+	Route::get('/employee/delete/{id}','EmployeeController@deleteEmployee')->name('employee.delete');
+});

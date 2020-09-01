@@ -7,7 +7,7 @@
             <div class="card">
                 <div class="card-header">Dashboard</div>
 
-                <div class="card-body">
+                <div class="card-body text-center">
                     @if (session('status'))
                         <div class="alert alert-success" role="alert">
                             {{ session('status') }}
@@ -15,7 +15,7 @@
                     @endif
 
 
-                    <a href="{{route('employee.create')}}" class="btn btn-info text-white">Create Employee</a>
+                    <a href="{{route('employee.list')}}" class="btn btn-info text-white">View Employee</a>
                 </div>
             </div>
         </div>
